@@ -9,6 +9,7 @@ export const useGetTransactions = () => {
     const {userID} = useGetUserInfo();
 
     const [transactions, setTransactions] = useState([])
+    const [transactionTotals, setTransactionTotals] = useState({balance: 0.0, income: 0.0, expenses: 0.0})
 
     const transactionCollectionRef = collection(db, "transactions")
     
@@ -23,16 +24,26 @@ export const useGetTransactions = () => {
                 orderBy("createdAt")
             );
 
-            unsubscribe = onSnapshot(queryTransactions, (snapshot) => {
-                let docs = [];  //this will hold a list of all our documents
+            unsubscribe = onSnapshot(queryTransactions, (snapshot) => { //snapshot is what is returned by the query, in this case a list of all the documents
+                let docs = [];  //this will hold a list of all our documents in a format we want
+                let totalIncome = 0;
+                let totalExpenses = 0;
                 snapshot.forEach((doc) => {
                     const data = doc.data();
                     const id = doc.id;
 
                     docs.push({...data, id})
+
+                    if (data.transactionType === "expense") {
+                        totalExpenses += Number(data.transactionAmount);
+                    } else {
+                        totalIncome += Number(data.transactionAmount);
+                    }
                 });
 
                 setTransactions(docs);
+                let balance = totalIncome - totalExpenses;
+                setTransactionTotals({balance, expenses: totalExpenses, income: totalIncome})
 
             })
 
@@ -48,6 +59,6 @@ export const useGetTransactions = () => {
         getTransactions();
     }, []);
 
-    return { transactions }
+    return { transactions, transactionTotals };
 
 }
