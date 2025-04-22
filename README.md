@@ -5,4 +5,7 @@ Expense Tracker Application using Firebase and React
 Build project with 
 `npm run build`
 
+## Features 
+- Login Page
+- Expense Tracker Page
 
