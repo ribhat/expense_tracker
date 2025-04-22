@@ -10,7 +10,7 @@ export const Auth = () => {
     const authInfo = {
       userID: results.user.uid,
       name: results.user.displayName,
-      photoURL: results.user.photoURL,
+      profilePhoto: results.user.photoURL,
       isAuth: true,
     };
     localStorage.setItem("auth", JSON.stringify(authInfo));
